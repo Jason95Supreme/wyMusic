@@ -1,15 +1,10 @@
 <template>
   <div class="navbar">
-    <span class="iconfont icon-icon" @click="showSide"></span>
-
-    <div class="icon-box">
-      <span class="iconfont icon-yinyue" @click="toMusic"></span>
-      <span class="iconfont icon-wangyiyunyinlezizhi-copy" @click="toWYyun"></span>
-      <span class="iconfont icon-haoyou" @click="toFriend"></span>
+    <span class="iconfont icon-fanhui2" @click="back"></span>
+    <div class="inBox">
+      <input type="text" class="searchIn" placeholder="音乐、视频、歌词、电台" v-model="searchCon" @keyup.enter="confirmSearch">
     </div>
-
-    <span class="iconfont icon-chazhao"></span>
-    
+    <span class="iconfont icon-guanbi" @click="back" v-show="searchCon!==''"></span>
   </div>
 </template>
 
@@ -17,21 +12,21 @@
 export default {
   data () {
     return {
+      // searchCon: ''
+    }
+  },
+  computed: {
+    searchCon () {
+      this.$emit('confirmSearch')
     }
   },
   methods: {
     // 将事件触发到父页面
-    toMusic () {
-      this.$emit('toMusic')
+    back () {
+      this.$emit('back')
     },
-    toWYyun () {
-      this.$emit('toWYyun')
-    },
-    toFriend () {
-      this.$emit('toFriend')
-    },
-    showSide () {
-      this.$emit('showSide')
+    confirmSearch () {
+      this.$emit('confirmSearch', this.searchCon)
     }
   }
 }
@@ -47,60 +42,37 @@ export default {
   background-color $color
   z-index: 1;
   max-width: 768px;
-.icon-icon
-    position: absolute;
-    left: 15px;
-    font-size: 26px;
-    line-height: 50px;
-    color: #fff;
-.icon-box
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-.icon-yinyue,
-.icon-wangyiyunyinlezizhi-copy,
-.icon-haoyou 
-    position: relative;
-    line-height: 50px;
-    color: #fff;
-.icon-yinyue 
-    left: 15px;
-    font-size: 23px;   
-.icon-wangyiyunyinlezizhi-copy
-    left: 27%;
-    font-size: 26px; 
-.icon-haoyou 
-    left: 45%;
-    font-size: 26px;
-
-.icon-chazhao
-  position: absolute;
-  right: 15px;
-  font-size: 22px;
-  line-height: 50px;
+.icon-fanhui2
+  font-size: 26px;
   color: #fff;
+  margin-left: 15px;
+  line-height: 50px;
+.icon-guanbi
+  font-size: 16px;
+  color: #fff;
+  position: absolute;
+  line-height: 50px;
+  right: 25px;
+.inBox
+  position: absolute;
+  left: 50px;
+  right: 20px;
+  height: 100%;
+  top: 0;
+.searchIn
+  outline: none;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  height: 26px;
+  position: absolute;
+  top: 12px;
+  width: 100%;
+  caret-color: #fff;
+  padding-left 5px
 
-.mask
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-.side-con
-    position: fixed;
-    width: 80%;
-    height: 100%;
-    left: 0;
-    background: #fff;
-.fade-enter-active, .fade-leave-active
-    transition opacity 0.6s
-.fade-enter, .fade-leave-to
-    opacity 0
-    
-.slide-enter-active, .slide-leave-active
-    transition all 0.3s
-.slide-enter, .slide-leave-to
-    transform translateX(-100%)
+input::-webkit-input-placeholder
+  color rgba(255,255,255,0.3)
+  font-size 16px
+
 </style>

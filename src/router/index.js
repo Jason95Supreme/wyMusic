@@ -6,9 +6,16 @@ import home from '../pages/home'
 import music from '../pages/music'
 import wyyun from '../pages/wyyun'
 import friend from '../pages/friend'
+import search from '../pages/search'
+import song from '../pages/search-song'
+import singer from '../pages/search-singer'
+import album from '../pages/search-album'
+import playlist from '../pages/search-playlist'
+import mv from '../pages/search-mv'
 
 Vue.component('navbar', require('@/components/navbar'))
 Vue.component('sidebar', require('@/components/sidebar'))
+Vue.component('loader', require('@/components/loader'))
 Vue.use(Router)
 
 export default new Router({
@@ -32,6 +39,37 @@ export default new Router({
           path: '/home/myfriend',
           name: 'friend',
           component: friend
+        }
+      ]
+    },
+    {
+      path: '/search',
+      component: search,
+      children: [
+        {
+          path: '/search/song',
+          name: 'song',
+          component: song
+        },
+        {
+          path: '/search/singer',
+          name: 'singer',
+          component: singer
+        },
+        {
+          path: '/search/album',
+          name: 'album',
+          component: album
+        },
+        {
+          path: '/search/playlist',
+          name: 'playlist',
+          component: playlist
+        },
+        {
+          path: '/search/mv',
+          name: 'mv',
+          component: mv
         }
       ]
     },

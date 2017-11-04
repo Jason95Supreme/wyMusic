@@ -186,7 +186,7 @@ main
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0,0,0,0.4);
   top: 0;
   z-index: 2;
 .new-song

@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <transition name="upDown">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -8,10 +10,18 @@
 
 export default {
   name: 'app'
+  // watch: {
+  //   '$route' (to, from) {
+  //     // const vm = this
+  //     let toPath = to.path.split('/')
+  //     let fromPath = from.path.split('/')
+  //     console.log('path:', toPath, '|', fromPath)
+  //   }
+  // }
 }
 </script>
 
-<style>
+<style lang="stylus" scoped>
 *{
   margin: 0;
   padding: 0;
@@ -28,4 +38,8 @@ export default {
   right: 0;
   margin: 0 auto;
 }
+.upDown-enter-active, .upDown-leave-active
+  transition all .5s
+.upDown-enter, .upDown-leave-to
+  opacity 0
 </style>
