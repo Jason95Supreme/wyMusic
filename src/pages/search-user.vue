@@ -1,16 +1,20 @@
 <template>
-    <!-- 专辑内容 -->
-  <div class="album">
+  <!-- 用户内容 -->
+  <div class="user">
     <div class="weui-panel weui-panel_access" v-if="loading">
       <div class="weui-panel__bd">
-        <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="i in albumData">
+        <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg user-box" v-for="i in userData">
           <div class="weui-media-box__hd">
-            <img class="weui-media-box__thumb" :src="i.picUrl" style="width:60px;margin-right:5px;display:block">
+            <img class="weui-media-box__thumb" :src="i.avatarUrl" style="width:60px;margin-right:5px;display:block;border-radius:50%">
+            <span class="iconfont icon-music" v-show="i.authStatus!==0"></span>
           </div>
           <div class="weui-media-box__bd">
-            <h4 class="weui-media-box__title">{{i.name}}</h4>
-            <p class="weui-media-box__desc" v-if="i.containedSong===''">{{i.artist.name}} {{i.date}}</p>
-            <p class="weui-media-box__desc" v-else>{{i.artist.name}} 包含单曲: {{i.containedSong}}</p>
+            <h4 class="weui-media-box__title">
+              {{i.nickname}}
+              <span class="iconfont icon-nan" style="color:#33b1eb" v-if="i.gender===1"></span>
+              <span class="iconfont icon-nv" style="color:#FC6E8C" v-else></span>
+            </h4>
+            <p class="weui-media-box__desc">{{i.signature}}</p>
           </div>
         </a>
       </div>
@@ -27,16 +31,13 @@ import store from '../store'
 export default {
   data () {
     return {
-      albumData: []
+      userData: []
     }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      get(`/music/search?keywords=${vm.searchCon}&type=10`).then(res => {
-        vm.albumData = res.result.albums
-        vm.albumData.map(x => {
-          x.date = vm._exchangeTime(x.publishTime)
-        })
+      get(`/music/search?keywords=${vm.searchCon}&type=1002`).then(res => {
+        vm.userData = res.result.userprofiles
         let args = {loading: true}
         store.dispatch('searchParams', args)
       }).catch(error => {
@@ -53,27 +54,30 @@ export default {
     }
   },
   methods: {
-    // 将时间戳转换为普通日期（不包含时间）
-    _exchangeTime (time) {
-      let curDate = new Date(parseInt(time)).toLocaleString().split(' ')[0]
-      let tmp = curDate.replace(/\//g, '.')
-      return tmp
-    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" scoped>
-.album
+.user
   position absolute
   width 100%
   height 100%
   top: 40px;
-.weui-media-box:before
-  left: 85px;
 .weui-panel
   position: absolute;
   width: 100%;
   margin-bottom: 50px;
+.user-box
+  padding: 15px;
+.icon-music
+  color: #FF2434
+  position: absolute;
+  top: 40px;
+  font-size: 20px;
+  margin-left: 5px;
+  transform rotate(30deg)
+.weui-media-box:before
+  left: 85px;
 </style>

@@ -1,7 +1,7 @@
 <template>
   <!-- 歌手内容 -->
   <div class="singer">
-    <div class="weui-cells">
+    <div class="weui-cells" v-if="loading">
       <div class="weui-cell" v-for="i in singerData">
         <div class="weui-cell__hd">
           <img :src="i.img1v1Url"style="width:60px;margin-right:5px;display:block">
@@ -15,6 +15,8 @@
         </div>
       </div>
     </div>
+    <!-- loader -->
+    <loader v-else></loader>
   </div>
 </template>
 
@@ -30,7 +32,6 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      console.log('000::', vm.searchCon)
       get(`/music/search?keywords=${vm.searchCon}&type=100`).then(res => {
         vm.singerData = res.result.artists
         let args = {loading: true}
@@ -43,6 +44,9 @@ export default {
   computed: {
     searchCon () {
       return store.state.search.searchCon
+    },
+    loading () {
+      return store.state.search.loading
     }
   }
 }
@@ -55,6 +59,10 @@ export default {
   width 100%
   height 100%
   top: 20px;
+.weui-cells 
+  position: absolute;
+  margin-bottom: 50px;
+  width: 100%;
 .weui-cell:before
   left: 80px;
 </style>

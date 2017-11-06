@@ -12,6 +12,8 @@ import singer from '../pages/search-singer'
 import album from '../pages/search-album'
 import playlist from '../pages/search-playlist'
 import mv from '../pages/search-mv'
+import radio from '../pages/search-radio'
+import user from '../pages/search-user'
 
 Vue.component('navbar', require('@/components/navbar'))
 Vue.component('sidebar', require('@/components/sidebar'))
@@ -70,6 +72,16 @@ export default new Router({
           path: '/search/mv',
           name: 'mv',
           component: mv
+        },
+        {
+          path: '/search/radio',
+          name: 'radio',
+          component: radio
+        },
+        {
+          path: '/search/user',
+          name: 'user',
+          component: user
         }
       ]
     },

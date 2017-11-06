@@ -1,13 +1,12 @@
 <template>
   <transition name="upDown">
     <div class="search">
-      <!-- <navbar v-on:back="back" v-on:confirmSearch="confirmSearch"></navbar> -->
       <div class="navbar">
         <span class="iconfont icon-fanhui2" @click="back"></span>
         <div class="inBox">
           <input type="text" class="searchIn" placeholder="音乐、视频、歌词、电台" v-model="searchCon" @keyup.enter="confirmSearch">
         </div>
-        <span class="iconfont icon-guanbi" @click="searchCon=''" v-show="searchCon!==''"></span>
+        <span class="iconfont icon-guanbi" @click="delCon" v-show="searchCon!==''"></span>
       </div>
 
       <div class="singer-type" v-if="isEnterSearch">
@@ -22,83 +21,25 @@
           <div class="bar" v-for="(i, index) in barCon" :class="{isAc: index === seleIndex}" @click="changeTab(index)">{{i.text}}</div>
           <span class="under-highline" ref="tab"></span>
         </div>
-        <!-- loader -->
-        <loader v-show="!loading"></loader>
 
-        <div v-show="loading">
-          <transition name="searchSlide">
-            <router-view></router-view>
-          </transition>
-        
-          <!-- 视频内容 -->
-          <!-- <div class="weui-panel weui-panel_access" v-show="barCon[seleIndex].text === '视频'">
-            <div class="weui-panel__bd">
-              <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg mv-box" v-for="i in mvData">
-                <div class="weui-media-box__hd mv-hd">
-                  <img class="weui-media-box__thumb mv-thumb" :src="i.cover">
-                  <span class="iconfont icon-shipin">
-                    <span class="mv-count">{{i.playCounts}}</span>
-                  </span>
-                </div>
-                <div class="weui-media-box__bd mv-bd">
-                  <h4 class="weui-media-box__title">
-                    <span class="iconfont icon-MV"></span>
-                    {{i.name}}
-                  </h4>
-                  <p class="weui-media-box__desc">{{i.mvTime}}  {{i.artistName}}</p>
-                </div>
-              </a>
-            </div>
-          </div> -->
-          <!-- 电台内容 -->
-            <div class="weui-panel weui-panel_access" v-show="barCon[seleIndex].text === '主播电台'">
-              <div class="weui-panel__bd">
-                <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="i in radioData">
-                  <div class="weui-media-box__hd">
-                    <img class="weui-media-box__thumb" :src="i.picUrl" style="width:60px;margin-right:5px;display:block">
-                  </div>
-                  <div class="weui-media-box__bd">
-                    <h4 class="weui-media-box__title">{{i.name}}</h4>
-                    <p class="weui-media-box__desc">{{i.dj.nickname}}</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-          <!-- 用户内容 -->
-            <div class="weui-panel weui-panel_access" v-show="barCon[seleIndex].text === '用户'">
-              <div class="weui-panel__bd">
-                <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg user-box" v-for="i in userData">
-                  <div class="weui-media-box__hd">
-                    <img class="weui-media-box__thumb" :src="i.avatarUrl" style="width:60px;margin-right:5px;display:block;border-radius:50%">
-                    <span class="iconfont icon-music" v-show="i.authStatus!==0"></span>
-                  </div>
-                  <div class="weui-media-box__bd">
-                    <h4 class="weui-media-box__title">
-                      {{i.nickname}}
-                      <span class="iconfont icon-nan" style="color:#33b1eb" v-if="i.gender===1"></span>
-                      <span class="iconfont icon-nv" style="color:#FC6E8C" v-else></span>
-                    </h4>
-                    <p class="weui-media-box__desc">{{i.signature}}</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
+        <transition :name="searchSlide">
+          <router-view></router-view>
+        </transition>
       </main>
     </div>
   </transition>
 </template>
 
 <script>
-import { get } from '../../api/api.js'
+// import { get } from '../../api/api.js'
 import store from '../store'
+
 export default {
   data () {
     return {
       searchCon: '',
       seleIndex: 0,
       isEnterSearch: true,
-      // loading: false,
       barCon: [
         {typeId: 1, text: '单曲'},
         {typeId: 100, text: '歌手'},
@@ -108,18 +49,45 @@ export default {
         {typeId: 1009, text: '主播电台'},
         {typeId: 1002, text: '用户'}
       ],
-      // searchData: [],
-      // singerData: [],
-      // albumData: [],
-      // playListData: [],
-      // mvData: [],
-      radioData: [],
-      userData: []
+      searchSlide: '',
+      currPath: ''
+    }
+  },
+  watch: {
+    $route (to, from) {
+      let toPath = to.path.split('/')[2]
+      let fromPath = from.path.split('/')[2]
+      let objArr = [
+        {path: 'song'},
+        {path: 'singer'},
+        {path: 'album'},
+        {path: 'playlist'},
+        {path: 'mv'},
+        {path: 'radio'},
+        {path: 'user'}
+      ]
+      let toIndex
+      let fromIndex
+      objArr.map((x, index) => {
+        if (toPath === x.path) {
+          toIndex = index
+          return toIndex
+        } else if (fromPath === x.path) {
+          fromIndex = index
+          return fromIndex
+        }
+      })
+      toIndex > fromIndex ? this.searchSlide = 'lftSlide' : this.searchSlide = 'rgtSlide'
     }
   },
   methods: {
     back () {
       this.$router.replace('/home/music')
+    },
+    delCon () {
+      this.searchCon = ''
+      this.$router.replace('/search')
+      this.isEnterSearch = true
     },
     changeTab (index) {
       let tmp = index * 100
@@ -145,6 +113,9 @@ export default {
     // 歌手列表
     _searchSinger () {
       const vm = this
+      if (vm.$route.name === 'singer') {
+        return
+      }
       vm.loading = false
       vm.$router.replace('/search/singer')
       let args = {
@@ -156,6 +127,9 @@ export default {
     // 专辑列表
     _searchAlbum () {
       const vm = this
+      if (vm.$route.name === 'album') {
+        return
+      }
       vm.loading = false
       vm.$router.replace('/search/album')
       let args = {
@@ -166,6 +140,9 @@ export default {
     // 歌单列表
     _searchPlayList () {
       const vm = this
+      if (vm.$route.name === 'playlist') {
+        return
+      }
       vm.loading = false
       vm.$router.replace('/search/playlist')
       let args = {
@@ -177,58 +154,62 @@ export default {
     // MV列表
     _searchMV () {
       const vm = this
+      if (vm.$route.name === 'mv') {
+        return
+      }
       vm.loading = false
       vm.$router.replace('/search/mv')
       let args = {
         searchCon: vm.searchCon
       }
       store.dispatch('searchParams', args)
-      // get(`/music/search?keywords=${this.searchCon}&type=1004`).then(res => {
-      //   vm.mvData = res.result.mvs
-      //   vm.mvData.map(x => {
-      //     x.mvTime = vm._mvTime(x.duration)
-      //     x.playCounts = vm._playCount(x.playCount, 'mv')
-      //   })
-      //   vm.loading = true
-      // }).catch(error => {
-      //   console.log(error)
-      // })
     },
 
     // 电台列表
     _searchRadio () {
       const vm = this
+      if (vm.$route.name === 'radio') {
+        return
+      }
       vm.loading = false
-      get(`/music/search?keywords=${this.searchCon}&type=1009`).then(res => {
-        vm.radioData = res.result.djRadios
-        vm.loading = true
-        // console.log('vm.albumData:', vm.albumData)
-      }).catch(error => {
-        console.log(error)
-      })
+      vm.$router.replace('/search/radio')
+      let args = {
+        searchCon: vm.searchCon
+      }
+      store.dispatch('searchParams', args)
     },
     // 用户列表
     _searchUser () {
       const vm = this
+      if (vm.$route.name === 'user') {
+        return
+      }
       vm.loading = false
-      get(`/music/search?keywords=${this.searchCon}&type=1002`).then(res => {
-        vm.userData = res.result.userprofiles
-        vm.loading = true
-        // console.log('vm.albumData:', vm.albumData)
-      }).catch(error => {
-        console.log(error)
-      })
+      vm.$router.replace('/search/user')
+      let args = {
+        searchCon: vm.searchCon
+      }
+      store.dispatch('searchParams', args)
     },
     // 默认请求单曲列表
     confirmSearch () {
       const vm = this
+      // 如果是在当前页面再点击请求，则不请求
+      if (vm.$route.name === 'song') {
+        return
+      }
       vm.loading = false
       if (!vm.searchCon) {
         return
       }
       vm.isEnterSearch = false
-      // vm.seleIndex = 0
+      // 将下划线重置到单曲
+      if (vm.seleIndex !== 0) {
+        this.$refs.tab.style.transform = `translateX(0)`
+        vm.seleIndex = 0
+      }
       vm.$router.replace('/search/song')
+      vm.currPath = 'song'
       let args = {
         searchCon: vm.searchCon
       }
@@ -341,87 +322,6 @@ main
     bottom: 0;
     transition all .2s
 
-.weui-panel
-  width 100%
-  margin-bottom: 50px;
-  margin-top: 40px;
-.weui-media-box
-  padding-right: 50px;
-// .icon-icon1
-//   position: absolute;
-//   top: 25px;
-//   right: 15px;
-//   color: #999999;
-//   font-size: 26px;
-
-.weui-cells
-  width 100%
-  margin-bottom: 50px;
-  margin-top: 40px;
-.weui-cell__bd p
-  white-space: nowrap;
-  width: 200px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-.weui-media-box__title
-  margin-bottom: 10px;
-// .account
-//   font-size 14px
-//   margin-left: 5px;
-// .weui-media-box_appmsg .weui-media-box__thumb
-//   max-height none
-// .weui-media-box_appmsg .mv-bd
-//   margin-left: 10px
-// .mv-hd
-//   width: 110px;
-//   position: relative;
-// .mv-thumb
-//   width: 120px;
-//   height: 75px;
-//   margin-right: 5px;
-//   display: block;
-//   margin-top: -7px;
-// .icon-shipin
-//   position: absolute;
-//   top: -25px;
-//   color: #fff;
-//   font-size: 18px;
-//   right: 0;
-//   .mv-count
-//     font-size: 12px;
-//     margin-left: 2px;
-//     position: relative;
-//     top: -1px;
-// .icon-MV
-//   color: #ffa33e;
-//   font-size: 23px;
-//   position: relative;
-//   top: 2px;
-
-.weui-media-box
-  padding: 5px 15px;
-  &:before
-    left: 85px;
-// .mv-box:before
-//   left: 150px;
-.song-box,
-.mv-box
-  padding: 15px;
-.song-box:before
-  left: 15px;
-.weui-cell:before
-  left: 70px;
-.user-box
-  padding: 15px;
-
-.icon-music
-  color: #FF2434
-  position: absolute;
-  top: 40px;
-  font-size: 20px;
-  margin-left: 5px;
-  transform rotate(30deg)
-
 .singer-type
   width: 100%;
   height: 50px;
@@ -448,10 +348,21 @@ main
     position: relative;
     top: -2px;
 
-.searchSlide-enter-active, .searchSlide-leave-active
-  transition all .2s
-.searchSlide-enter
-  transform translateX(-100%)
-.searchSlide-leave-to
-  transform translateX(100%)
+.lftSlide-enter-active, .lftSlide-leave-active
+  transition all 0.3s
+.lftSlide-enter
+  opacity 0
+  transform translateX(50%)
+.lftSlide-leave-to
+  opacity 0
+  transform translateX(-50%)
+
+.rgtSlide-enter-active, .rgtSlide-leave-active
+  transition all 0.3s
+.rgtSlide-enter
+  opacity 0
+  transform translateX(-50%)
+.rgtSlide-leave-to
+  opacity 0
+  transform translateX(50%)
 </style>

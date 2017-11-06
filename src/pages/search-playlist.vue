@@ -1,7 +1,7 @@
 <template>
   <!-- 歌单内容 -->
   <div class="playlist">
-    <div class="weui-panel weui-panel_access">
+    <div class="weui-panel weui-panel_access" v-if="loading">
       <div class="weui-panel__bd">
         <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg" v-for="i in playListData">
           <div class="weui-media-box__hd">
@@ -14,6 +14,8 @@
         </a>
       </div>
     </div>
+    <!-- loader -->
+    <loader v-else></loader>
   </div>
 </template>
 
@@ -44,6 +46,9 @@ export default {
   computed: {
     searchCon () {
       return store.state.search.searchCon
+    },
+    loading () {
+      return store.state.search.loading
     }
   },
   methods: {
@@ -77,6 +82,10 @@ export default {
   width 100%
   height 100%
   top: 40px;
-.weui-media-box_appmsg:last-child
+.weui-panel
+  position: absolute;
+  width: 100%;
   margin-bottom: 50px;
+.weui-media-box:before
+  left: 85px;
 </style>
