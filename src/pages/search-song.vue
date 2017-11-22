@@ -3,7 +3,7 @@
   <div class="song">
     <div class="weui-panel weui-panel_access" v-if="loading">
       <div class="weui-panel__bd">
-        <div class="weui-media-box weui-media-box_text song-box" v-for="i in searchData">
+        <div class="weui-media-box weui-media-box_text song-box" v-for="i in searchData" @click="playSong(i)">
           <h4 class="weui-media-box__title">{{i.name}}</h4>
           <p class="weui-media-box__desc">{{i.artists[0].name}} - {{i.album.name}}</p>
           <span class="iconfont icon-icon1"></span>
@@ -43,6 +43,22 @@ export default {
     loading () {
       return store.state.search.loading
     }
+  },
+  methods: {
+    playSong (songDetail) {
+      get(`/music/music/url?id=${songDetail.id}`).then(res => {
+        let args = {
+          imgUrl: songDetail.artists[0].img1v1Url,
+          songName: songDetail.name,
+          singerName: songDetail.artists[0].name,
+          playUrl: res.data[0].url,
+          playState: songDetail.id
+        }
+        store.dispatch('playContent', args)
+      }).catch(error => {
+        console.log(error)
+      })
+    }
   }
 }
 </script>
@@ -52,7 +68,7 @@ export default {
 .song
   position absolute
   width 100%
-  height 100%
+  margin-bottom: 50px;
   top: 40px;
 .icon-icon1
   position: absolute;
@@ -65,4 +81,6 @@ export default {
 .song-box
   h4,p
     width: 90%;
+  &:active
+    background: rgba(0,0,0,0.1)
 </style>

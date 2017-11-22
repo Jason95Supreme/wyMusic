@@ -18,6 +18,7 @@ import user from '../pages/search-user'
 Vue.component('navbar', require('@/components/navbar'))
 Vue.component('sidebar', require('@/components/sidebar'))
 Vue.component('loader', require('@/components/loader'))
+Vue.component('playbar', require('@/components/playbar'))
 Vue.use(Router)
 
 export default new Router({

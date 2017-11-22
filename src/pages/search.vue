@@ -25,6 +25,8 @@
         <transition :name="searchSlide">
           <router-view></router-view>
         </transition>
+
+        <playbar></playbar>
       </main>
     </div>
   </transition>
@@ -41,16 +43,15 @@ export default {
       seleIndex: 0,
       isEnterSearch: true,
       barCon: [
-        {typeId: 1, text: '单曲'},
-        {typeId: 100, text: '歌手'},
-        {typeId: 10, text: '专辑'},
-        {typeId: 1000, text: '歌单'},
-        {typeId: 1004, text: '视频'},
-        {typeId: 1009, text: '主播电台'},
-        {typeId: 1002, text: '用户'}
+        {name: 'song', text: '单曲'},
+        {name: 'singer', text: '歌手'},
+        {name: 'album', text: '专辑'},
+        {name: 'playlist', text: '歌单'},
+        {name: 'mv', text: '视频'},
+        {name: 'radio', text: '主播电台'},
+        {name: 'user', text: '用户'}
       ],
-      searchSlide: '',
-      currPath: ''
+      searchSlide: ''
     }
   },
   watch: {
@@ -94,98 +95,30 @@ export default {
       this.$refs.tab.style.transform = `translateX(${tmp}%)`
       this.seleIndex = index
       switch (this.barCon[index].text) {
-        case '单曲': this.confirmSearch()
+        case '单曲': this._searchFunc('song')
           break
-        case '歌手': this._searchSinger()
+        case '歌手': this._searchFunc('singer')
           break
-        case '专辑': this._searchAlbum()
+        case '专辑': this._searchFunc('album')
           break
-        case '歌单': this._searchPlayList()
+        case '歌单': this._searchFunc('playlist')
           break
-        case '视频': this._searchMV()
+        case '视频': this._searchFunc('mv')
           break
-        case '主播电台': this._searchRadio()
+        case '主播电台': this._searchFunc('radio')
           break
-        case '用户': this._searchUser()
+        case '用户': this._searchFunc('user')
           break
       }
     },
-    // 歌手列表
-    _searchSinger () {
+    // 传不同值切换不同页面
+    _searchFunc (pathName) {
       const vm = this
-      if (vm.$route.name === 'singer') {
+      if (vm.$route.name === pathName) {
         return
       }
       vm.loading = false
-      vm.$router.replace('/search/singer')
-      let args = {
-        searchCon: vm.searchCon
-      }
-      store.dispatch('searchParams', args)
-    },
-
-    // 专辑列表
-    _searchAlbum () {
-      const vm = this
-      if (vm.$route.name === 'album') {
-        return
-      }
-      vm.loading = false
-      vm.$router.replace('/search/album')
-      let args = {
-        searchCon: vm.searchCon
-      }
-      store.dispatch('searchParams', args)
-    },
-    // 歌单列表
-    _searchPlayList () {
-      const vm = this
-      if (vm.$route.name === 'playlist') {
-        return
-      }
-      vm.loading = false
-      vm.$router.replace('/search/playlist')
-      let args = {
-        searchCon: vm.searchCon
-      }
-      store.dispatch('searchParams', args)
-    },
-
-    // MV列表
-    _searchMV () {
-      const vm = this
-      if (vm.$route.name === 'mv') {
-        return
-      }
-      vm.loading = false
-      vm.$router.replace('/search/mv')
-      let args = {
-        searchCon: vm.searchCon
-      }
-      store.dispatch('searchParams', args)
-    },
-
-    // 电台列表
-    _searchRadio () {
-      const vm = this
-      if (vm.$route.name === 'radio') {
-        return
-      }
-      vm.loading = false
-      vm.$router.replace('/search/radio')
-      let args = {
-        searchCon: vm.searchCon
-      }
-      store.dispatch('searchParams', args)
-    },
-    // 用户列表
-    _searchUser () {
-      const vm = this
-      if (vm.$route.name === 'user') {
-        return
-      }
-      vm.loading = false
-      vm.$router.replace('/search/user')
+      vm.$router.replace(`/search/${pathName}`)
       let args = {
         searchCon: vm.searchCon
       }
@@ -195,9 +128,9 @@ export default {
     confirmSearch () {
       const vm = this
       // 如果是在当前页面再点击请求，则不请求
-      if (vm.$route.name === 'song') {
-        return
-      }
+      // if (vm.$route.name === 'song') {
+      //   return
+      // }
       vm.loading = false
       if (!vm.searchCon) {
         return
@@ -209,9 +142,9 @@ export default {
         vm.seleIndex = 0
       }
       vm.$router.replace('/search/song')
-      vm.currPath = 'song'
       let args = {
-        searchCon: vm.searchCon
+        searchCon: vm.searchCon,
+        loading: true
       }
       store.dispatch('searchParams', args)
     }
