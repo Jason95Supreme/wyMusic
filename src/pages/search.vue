@@ -58,22 +58,14 @@ export default {
     $route (to, from) {
       let toPath = to.path.split('/')[2]
       let fromPath = from.path.split('/')[2]
-      let objArr = [
-        {path: 'song'},
-        {path: 'singer'},
-        {path: 'album'},
-        {path: 'playlist'},
-        {path: 'mv'},
-        {path: 'radio'},
-        {path: 'user'}
-      ]
+      let objArr = ['song', 'singer', 'album', 'playlist', 'mv', 'radio', 'user']
       let toIndex
       let fromIndex
       objArr.map((x, index) => {
-        if (toPath === x.path) {
+        if (toPath === x) {
           toIndex = index
           return toIndex
-        } else if (fromPath === x.path) {
+        } else if (fromPath === x) {
           fromIndex = index
           return fromIndex
         }
